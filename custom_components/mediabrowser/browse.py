@@ -608,15 +608,14 @@ async def get_stream_url(
                 )
                 url = f"{hub.server_url}{best[MediaSource.DIRECT_STREAM_URL]}"
             elif best.get(MediaSource.SUPPORTS_TRANSCODING, False):
-                url = f"{hub.server_url}{best[MediaSource.TRANSCODING_URL]}"
-                mime_type = "/".join(
-                    (
-                        item_media_type.lower(),
+                mime_type = (
+                    f"{item_media_type.lower()}/{
                         best.get(
                             MediaSource.TRANSCODING_CONTAINER,
-                            best.get(MediaSource.CONTAINER),
-                        ),
-                    ),
+                            best.get(MediaSource.CONTAINER)
+                        )
+                    }"
                 )
+                url = f"{hub.server_url}{best[MediaSource.TRANSCODING_URL]}"
 
     return (url, mime_type)

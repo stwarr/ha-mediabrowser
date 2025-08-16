@@ -1,5 +1,4 @@
 """Config and Options flows for Media Browser (Emby/Jellyfin) integration."""
-from __future__ import annotations
 
 import asyncio
 import logging
@@ -8,7 +7,12 @@ from typing import Any
 
 import aiohttp
 import voluptuous as vol
-from homeassistant.config_entries import ConfigEntry, ConfigFlow, OptionsFlow
+from homeassistant.config_entries import (
+    ConfigEntry,
+    ConfigFlow,
+    ConfigFlowResult,
+    OptionsFlow
+)
 from homeassistant.const import CONF_NAME, CONF_PASSWORD, CONF_URL, CONF_USERNAME
 from homeassistant.core import callback
 from homeassistant.data_entry_flow import FlowResult
@@ -84,7 +88,7 @@ class MediaBrowserConfigFlow(ConfigFlow, domain=DOMAIN):  # type: ignore
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
-    ) -> FlowResult:
+    ) -> ConfigFlowResult:
         """Handle the initial discovery step."""
 
         self.available_servers = {server[Server.ID]: server for server in discover_mb()}
@@ -103,7 +107,7 @@ class MediaBrowserConfigFlow(ConfigFlow, domain=DOMAIN):  # type: ignore
 
     async def async_step_select(
         self, user_input: dict[str, Any] | None = None
-    ) -> FlowResult:
+    ) -> ConfigFlowResult:
         """Handle multiple servers discovered step."""
         if user_input is not None:
             self.discovered_server_id = user_input[CONF_SERVER]
@@ -127,7 +131,7 @@ class MediaBrowserConfigFlow(ConfigFlow, domain=DOMAIN):  # type: ignore
 
     async def async_step_manual(
         self, user_input: dict[str, Any] | None = None
-    ) -> FlowResult:
+    ) -> ConfigFlowResult:
         """Handle the initial step."""
         errors: dict[str, str] = {}
 
@@ -184,10 +188,10 @@ class MediaBrowserConfigFlow(ConfigFlow, domain=DOMAIN):  # type: ignore
 
     async def async_step_reauth(
         self, user_input: dict[str, Any] | None = None
-    ) -> FlowResult:
+    ) -> ConfigFlowResult:
         """Handle the reauthorization step."""
         errors: dict[str, str] = {}
-        entry = self.hass.config_entries.async_get_entry(self.context["entry_id"])
+        entry = self.hass.config_entries.async_get_entry(self.context.get("entry_id", ""))
 
         assert entry is not None
 
@@ -199,11 +203,13 @@ class MediaBrowserConfigFlow(ConfigFlow, domain=DOMAIN):  # type: ignore
                 username=user_input[CONF_USERNAME],
                 password=user_input[CONF_PASSWORD],
             ):
-                return self.async_create_entry(
-                    title=options.get(CONF_NAME, options.get(CONF_CACHE_SERVER_NAME)),
-                    data={},
-                    options=options,
-                )
+                title = options.get(CONF_NAME, options.get(CONF_CACHE_SERVER_NAME))
+                if title is not None:
+                    return self.async_create_entry(
+                        title=title,
+                        data={},
+                        options=options,
+                    )
         previous_input = user_input or {}
 
         default_username = previous_input.get(
@@ -246,7 +252,7 @@ class MediaBrowserOptionsFlow(OptionsFlow):
 
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None  # pylint: disable=W0613
-    ) -> FlowResult:
+    ) -> ConfigFlowResult:
         """Handle the initial step."""
         return self.async_show_menu(
             step_id="init",
@@ -261,7 +267,7 @@ class MediaBrowserOptionsFlow(OptionsFlow):
             ],
         )
 
-    async def async_step_auth(self, user_input: dict[str, Any] | None) -> FlowResult:
+    async def async_step_auth(self, user_input: dict[str, Any] | None) -> ConfigFlowResult:
         """Handle the authentication step."""
         errors: dict[str, str] = {}
         if user_input:
@@ -309,7 +315,7 @@ class MediaBrowserOptionsFlow(OptionsFlow):
 
     async def async_step_libraries(
         self, user_input: dict[str, Any] | None
-    ) -> FlowResult:
+    ) -> ConfigFlowResult:
         """Handle the authentication step."""
         if user_input:
             self.options |= user_input
@@ -332,7 +338,7 @@ class MediaBrowserOptionsFlow(OptionsFlow):
             ),
         )
 
-    async def async_step_events(self, user_input: dict[str, Any] | None) -> FlowResult:
+    async def async_step_events(self, user_input: dict[str, Any] | None) -> ConfigFlowResult:
         """Handle the events step."""
         if user_input:
             self.options |= user_input
@@ -367,7 +373,7 @@ class MediaBrowserOptionsFlow(OptionsFlow):
             ),
         )
 
-    async def async_step_players(self, user_input: dict[str, Any] | None) -> FlowResult:
+    async def async_step_players(self, user_input: dict[str, Any] | None) -> ConfigFlowResult:
         """Handle the media players step."""
         if user_input:
             self.options |= user_input
@@ -417,7 +423,7 @@ class MediaBrowserOptionsFlow(OptionsFlow):
 
     async def async_step_remove_sensor(
         self, user_input: dict[str, Any] | None
-    ) -> FlowResult:
+    ) -> ConfigFlowResult:
         """Handle a step to remove a new latest sensor."""
 
         sensors = self.options.get(CONF_SENSORS, [])
@@ -475,7 +481,7 @@ class MediaBrowserOptionsFlow(OptionsFlow):
 
     async def async_step_add_sensor(
         self, user_input: dict[str, Any] | None
-    ) -> FlowResult:
+    ) -> ConfigFlowResult:
         """Handle a step to add a new latest sensor."""
         if user_input:
             sensor_key = build_sensor_key_from_config(user_input)
@@ -549,7 +555,7 @@ class MediaBrowserOptionsFlow(OptionsFlow):
 
     async def async_step_advanced(
         self, user_input: dict[str, Any] | None
-    ) -> FlowResult:
+    ) -> ConfigFlowResult:
         """Handle the advanced step."""
         if user_input:
             self.options |= user_input

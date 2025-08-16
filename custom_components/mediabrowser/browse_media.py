@@ -1,10 +1,9 @@
 """Browse implementation for Media Browser (Emby/Jellyfin) integration."""
 
-
 import logging
 from typing import Any
 
-from homeassistant.components.media_player import MediaClass
+from homeassistant.components.media_player.const import MediaClass
 from homeassistant.components.media_player.browse_media import BrowseMedia
 
 from .browse import get_children, get_item

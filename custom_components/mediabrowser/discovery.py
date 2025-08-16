@@ -17,6 +17,27 @@ from .const import (
 _LOGGER = logging.getLogger(__package__)
 
 
+def is_containerized():
+    import os
+    try:
+        if os.path.exists("/.dockerenv"):
+            return True
+        with open("/proc/self/cgroup", encoding="utf-8") as lines:
+            return any("docker" in line for line in lines)
+    except:
+        return False
+
+def get_hostname():
+    if not is_containerized():
+        return socket.gethostname()
+    else:
+        import subprocess
+        cmd = "ip route show"
+        process = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
+        output, error = process.communicate()
+        return str(output).split(' ')[2]
+
+
 def discover_mb(timeout: float = DISCOVERY_TIMEOUT) -> list[dict[str, Any]]:
     """Broadcasts all local networks and waits for a response from Emby or Jellyfin servers."""
     return _discover_message(
@@ -29,7 +50,7 @@ def _discover_message(
 ) -> list[dict[str, Any]]:
     result: list[dict[str, Any]] = []
     interfaces = socket.getaddrinfo(
-        host=socket.gethostname(), port=None, family=socket.AF_INET
+        host=get_hostname(), port=None, family=socket.AF_INET
     )
     all_ip_addresses = [ip[-1][0] for ip in interfaces]
     for ip_address in all_ip_addresses:

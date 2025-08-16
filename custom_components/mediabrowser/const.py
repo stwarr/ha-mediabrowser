@@ -1,9 +1,9 @@
 """Constants for the Media Browser (Emby/Jellyfin) integration."""
 
+from enum import StrEnum
 from typing import Any
 
-from homeassistant.backports.enum import StrEnum
-from homeassistant.components.media_player import MediaClass, MediaType
+from homeassistant.components.media_player.const import MediaClass, MediaType
 
 DOMAIN = "mediabrowser"
 

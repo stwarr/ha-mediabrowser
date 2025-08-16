@@ -3,14 +3,16 @@
 import json
 import logging
 from datetime import datetime
+from functools import cached_property
+from numbers import Number
 from typing import Any, Callable
 
 import homeassistant.helpers.entity_registry as entreg
 import homeassistant.util.dt as utildt
 import voluptuous as vol
 
-from homeassistant.components.media_player import (
-    MediaPlayerEntity,
+from homeassistant.components.media_player import MediaPlayerEntity
+from homeassistant.components.media_player.const import (
     MediaPlayerEntityFeature,
     MediaPlayerState,
     MediaType,
@@ -23,8 +25,9 @@ from homeassistant.helpers.entity_platform import (
     AddEntitiesCallback,
     async_get_current_platform,
 )
-from homeassistant.helpers.entity import DeviceInfo
+from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import InvalidStateError
 from .hub import MediaBrowserHub
 
 from .browse_media import async_browse_media_id
@@ -97,9 +100,9 @@ async def async_setup_entry(
     platform.async_register_entity_service(
         SERVICE_SEND_MESSAGE,
         {
-            vol.Required("text"): cv.string,
-            vol.Required("header"): cv.string,
-            vol.Optional("timeout"): cv.Number,
+            vol.Required("text"): str,
+            vol.Required("header"): str,
+            vol.Optional("timeout"): Number,
         },  # type: ignore
         "async_send_message",
     )
@@ -107,8 +110,8 @@ async def async_setup_entry(
     platform.async_register_entity_service(
         SERVICE_SEND_COMMAND,
         {
-            vol.Required("command"): cv.string,
-            vol.Optional("arguments"): cv.Any,
+            vol.Required("command"): str,
+            vol.Optional("arguments"): Any,
         },  # type: ignore
         "async_send_command",
     )
@@ -312,7 +315,7 @@ class MediaBrowserPlayer(MediaBrowserEntity, MediaPlayerEntity):
         if self._session is not None:
             self._update_from_session(self._session)
 
-    @property
+    @cached_property
     def device_info(self) -> DeviceInfo | None:
         return DeviceInfo(
             identifiers={(DOMAIN, self._session_key or "")},
@@ -391,7 +394,7 @@ class MediaBrowserPlayer(MediaBrowserEntity, MediaPlayerEntity):
         self,
         media_content_type: MediaType | str | None = None,
         media_content_id: str | None = None,
-    ) -> BrowseMedia | None:
+    ) -> BrowseMedia:
         if self._session is not None:
             return await async_browse_media_id(
                 self.hub,
@@ -399,7 +402,7 @@ class MediaBrowserPlayer(MediaBrowserEntity, MediaPlayerEntity):
                 self._session.get(Session.PLAYABLE_MEDIA_TYPES),
                 True,
             )
-        return None
+        raise InvalidStateError()
 
     async def async_play_media(
         self, media_type: MediaType | str, media_id: str, **kwargs: Any

@@ -1,17 +1,13 @@
 """The Media Browser (Emby/Jellyfin) integration."""
-from __future__ import annotations
 
 import asyncio
 import logging
 
 import aiohttp
-from homeassistant.config_entries import (
-    ConfigEntry,
-    ConfigEntryAuthFailed,
-    ConfigEntryNotReady,
-)
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_URL, Platform
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady
 
 from .helpers import size_of, snake_cased_json
 

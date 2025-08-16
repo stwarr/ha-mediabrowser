@@ -1,10 +1,9 @@
 """Entity base class for the Media Browser (Emby/Jellyfin) integration."""
 
-from typing import Any
+from functools import cached_property
 
-from homeassistant.helpers.device_registry import DeviceEntryType
-from homeassistant.helpers.entity import DeviceInfo, Entity
-from homeassistant.helpers.update_coordinator import CoordinatorEntity
+from homeassistant.helpers.device_registry import DeviceEntryType, DeviceInfo
+from homeassistant.helpers.entity import Entity
 
 from .const import DASHBOARD_MAP, DOMAIN, MANUFACTURER_MAP, Manufacturer
 
@@ -17,7 +16,7 @@ class MediaBrowserEntity(Entity):
     def __init__(self, hub: MediaBrowserHub) -> None:
         self.hub = hub
 
-    @property
+    @cached_property
     def device_info(self) -> DeviceInfo | None:
         return _get_device_info(self.hub)
 

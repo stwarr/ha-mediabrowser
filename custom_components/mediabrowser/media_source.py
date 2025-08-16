@@ -3,7 +3,7 @@
 import logging
 from typing import Any
 
-from homeassistant.components.media_player import MediaClass
+from homeassistant.components.media_player.const import MediaClass
 from homeassistant.components.media_source import (
     BrowseMediaSource,
     MediaSource,
@@ -49,7 +49,7 @@ async def async_get_media_source(hass: HomeAssistant) -> MediaSource:
 class MBSource(MediaSource):
     """Provide MediaBrowser servers as media sources."""
 
-    name: str = "Emby/Jellyfin"
+    name: str | None = "Emby/Jellyfin"
 
     def __init__(self, hubs: list[MediaBrowserHub]) -> None:
         """Create a new media source."""

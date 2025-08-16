@@ -1,6 +1,5 @@
 """Helpers for the Media Browser (Emby/Jellyfin) integration."""
 
-
 from datetime import datetime
 import logging
 import re
