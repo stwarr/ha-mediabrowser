@@ -3,7 +3,6 @@
 import json
 import logging
 from datetime import datetime
-from functools import cached_property
 from numbers import Number
 from typing import Any, Callable
 
@@ -315,8 +314,8 @@ class MediaBrowserPlayer(MediaBrowserEntity, MediaPlayerEntity):
         if self._session is not None:
             self._update_from_session(self._session)
 
-    @cached_property
-    def device_info(self) -> DeviceInfo | None:
+    @property
+    def device_info(self) -> DeviceInfo | None:  # type:ignore
         return DeviceInfo(
             identifiers={(DOMAIN, self._session_key or "")},
             manufacturer=MANUFACTURER_MAP.get(
