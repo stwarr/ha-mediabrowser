@@ -955,7 +955,7 @@ DEVICE_PROFILE_BASIC = {
     ],
     "DirectPlayProfiles": [
         {"Type": "Audio", "Container": "mp3", "AudioCodec": "mp3"},
-        {"Type": "Audio", "Container": "m4a,m4b", "AudioCodec": "aac"},
+        {"Type": "Audio", "Container": "m4a,m4b", "AudioCodec": "aac,alac"},
         {
             "Type": "Video",
             "Container": "mp4,m4v",
