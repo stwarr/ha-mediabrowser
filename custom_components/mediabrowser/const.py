@@ -941,27 +941,38 @@ DEVICE_PROFILE_BASIC = {
             "Container": "mp3",
             "Protocol": "http",
             "AudioCodec": "mp3",
-            "MaxAudioChannels": "2",
+            "MaxAudioChannels": 2
         },
         {
             "Type": "Video",
             "Container": "mp4",
             "Protocol": "http",
             "AudioCodec": "aac,mp3,opus,flac,vorbis",
-            "VideoCodec": "h264,mpeg4,mpeg2video",
-            "MaxAudioChannels": "6",
+            "VideoCodec": "hevc,h264,mpeg4,mpeg2video",
+            "MaxAudioChannels": 6
         },
-        {"Container": "jpeg", "Type": "Photo"},
+        {
+            "Type": "Photo",
+            "Container": "jpeg"
+        },
     ],
     "DirectPlayProfiles": [
-        {"Type": "Audio", "Container": "mp3", "AudioCodec": "mp3"},
-        {"Type": "Audio", "Container": "m4a,m4b", "AudioCodec": "aac,alac"},
+        {
+            "Type": "Audio",
+            "Container": "mp3",
+            "AudioCodec": "mp3"
+        },
+        {
+            "Type": "Audio",
+            "Container": "m4a,m4b",
+            "AudioCodec": "aac,alac"
+        },
         {
             "Type": "Video",
             "Container": "mp4,m4v",
             "AudioCodec": "aac,mp3,opus,flac,vorbis",
             "VideoCodec": "h264,mpeg4,mpeg2video",
-            "MaxAudioChannels": "6",
+            "MaxAudioChannels": 6
         },
     ],
     "ResponseProfiles": [],
