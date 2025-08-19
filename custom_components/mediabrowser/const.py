@@ -969,10 +969,9 @@ DEVICE_PROFILE_BASIC = {
         },
         {
             "Type": "Video",
-            "Container": "mp4,m4v",
+            "Container": "mp4,m4v,ts",
             "AudioCodec": "aac,mp3,opus,flac,vorbis",
-            "VideoCodec": "h264,mpeg4,mpeg2video",
-            "MaxAudioChannels": 6
+            "VideoCodec": "hevc,h264,mpeg4,mpeg2video"
         },
     ],
     "ResponseProfiles": [],
